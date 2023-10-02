@@ -19,7 +19,7 @@ dmodels_spawn_model:
     - if !<server.has_flag[dmodels_data.model_<[model_name]>]>:
         - debug error "[DModels] cannot spawn model <[model_name]>, model not loaded"
         - stop
-    - define center <[location].with_pitch[0].below[1]>
+    - define center <[location].with_pitch[0].with_yaw[<[location].yaw.add[180]>].below[1]>
     - define scale <[scale].if_null[<location[1,1,1]>]>
     - define global_scale <[scale].mul[<script[dmodels_config].parsed_key[default_scale]>]>
     - define rotation <[rotation].if_null[<quaternion[identity]>]>
@@ -56,7 +56,7 @@ dmodels_spawn_model:
         - define parentage.<[id]>.position <[new_pos]>
         - define parentage.<[id]>.rotation <[new_rot]>
         - define translation <[new_pos].proc[dmodels_mul_vecs].context[<[global_scale]>].div[16].mul[0.25]>
-        - define to_spawn_ent dmodel_part_display[item=<[part.item]>;display=HEAD;scale=<[global_scale]>]
+        - define to_spawn_ent dmodel_part_display[item=<[part.item]>;display=HEAD;translation=<[translation]>;left_rotation=<[orientation_parent].mul[<[pose]>]>;scale=<[global_scale]>]
         - if <[fake_to].exists>:
             - fakespawn <[to_spawn_ent]> <[center]> players:<[fake_to]> save:spawned d:infinite
             - define spawned <entry[spawned].faked_entity>
@@ -71,7 +71,6 @@ dmodels_spawn_model:
         - flag <[spawned]> dmodel_root:<[root]>
         - flag <[root]> dmodel_parts:->:<[spawned]>
         - flag <[root]> dmodel_anim_part.<[id]>:->:<[spawned]>
-    - run dmodels_reset_model_position def.root_entity:<[root]>
     - determine <[root]>
 
 dmodels_reset_model_position:
@@ -85,7 +84,7 @@ dmodels_reset_model_position:
     - if <[model_data]> == null:
         - debug error "<&[Error]> Could not update model for root entity <[root_entity]> as it does not exist."
         - stop
-    - define center <[root_entity].location.with_yaw[<[root_entity].location.yaw.add[180]>].with_pitch[0].below[1]>
+    - define center <[root_entity].location.with_pitch[0].below[1]>
     - define global_scale <[root_entity].flag[dmodel_global_scale].mul[<script[dmodels_config].parsed_key[default_scale]>]>
     - define orientation <[root_entity].flag[dmodel_global_rotation]>
     - define parentage <map>
@@ -107,7 +106,7 @@ dmodels_reset_model_position:
           - if <[root_part].flag[dmodel_def_part_id]> == <[id]>:
             - teleport <[root_part]> <[center]>
             - adjust <[root_part]> translation:<[new_pos].proc[dmodels_mul_vecs].context[<[global_scale]>].div[16].mul[0.25]>
-            - adjust <[root_part]> left_rotation:<[orientation].mul[<[pose]>]>
+            - adjust <[root_part]> left_rotation:<[orientation_parent].mul[<[pose]>]>
             - adjust <[root_part]> scale:<[global_scale]>
 
 dmodels_mul_vecs:
