@@ -60,7 +60,9 @@ dmodels_move_to_frame:
                 - flag server dmodels_anim_active.<[root_entity].uuid>:!
     - define global_scale <[root_entity].flag[dmodel_global_scale].mul[<script[dmodels_config].parsed_key[default_scale]>]>
     - define center <[root_entity].location.with_pitch[0].below[1]>
-    - define orientation <[root_entity].flag[dmodel_global_rotation]>
+    - define rotation <[root_entity].flag[dmodel_global_rotation]>
+    - define rotation_fix <location[0,1,0].to_axis_angle_quaternion[<util.pi>]>
+    - define orientation <[rotation_fix].mul[<[rotation]>]>
     - define parentage <map>
     - foreach <[animation_data.animators]> key:part_id as:animator:
         - define framedata.position <location[0,0,0]>

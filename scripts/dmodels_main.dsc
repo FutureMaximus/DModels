@@ -9,9 +9,9 @@
 # @contributors Max^
 # @thanks Darwin, Max^, kalebbroo, sharklaserss - for helping with reference models, testing, ideas, etc
 # @date 2022/06/01
-# @updated 2023/10/02
+# @updated 2023/11/02
 # @denizen-build REL-1793
-# @script-version 2.2
+# @script-version 2.3
 #
 # This takes BlockBench "BBModel" files, converts them to a client-ready resource pack and Denizen internal data,
 # then is able to display them in minecraft and even animate them, by spawning and moving item display entities with resource pack items.
@@ -53,7 +53,8 @@
 #   /dmodels rotate [angles]       - "dmodels.rotate"       - Sets the rotation of the nearest real-spawned model to the given euler angles. Use '0,0,0' for default.
 #   /dmodels scale [scale]         - "dmodels.scale"        - Sets the scale-multiplier of the nearest real-spawned model set to the given value. Use '1,1,1' for default.
 #   /dmodels color [color]         - "dmodels.color"        - Sets the color of the nearest real-spawned model to the given color. Use 'white' for default.
-#   /dmodels viewrange [range]     - "dmoddels.viewrange"   - Sets the view-range of the nearest real-spawned model to the given range (in blocks).
+#   /dmodels viewrange [range]     - "dmodels.viewrange"    - Sets the view-range of the nearest real-spawned model to the given range (in blocks).
+#   /dmodels clearcache            - "dmodels.clearcache"   - Clears the resource pack file cache which stores the atlas and override data.
 #
 # #########
 #

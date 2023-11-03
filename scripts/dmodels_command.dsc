@@ -14,7 +14,7 @@ dmodels_command:
     type: command
     debug: false
     name: dmodels
-    usage: /dmodels [load/loadall/spawn/remove/animate/stopanimate/npcmodel/unload/unloadall/rotate/scale/color/viewrange]
+    usage: /dmodels [load/loadall/spawn/remove/animate/stopanimate/npcmodel/unload/unloadall/rotate/scale/color/viewrange/clearcache]
     description: Manages Denizen Models.
     permission: dmodels.help
     tab completions:
@@ -192,6 +192,9 @@ dmodels_command:
             - define view_range <context.args.get[2]>
             - run dmodels_set_view_range def.root_entity:<[target]> def.view_range:<[view_range]>
             - narrate "<&[base]>Model <[target].flag[dmodel_model_id].custom_color[emphasis]> view range is now <[view_range]>"
+        - case clearcache:
+            - run dmodels_clear_cache
+            - narrate "<&[base]>Cleared DModels cache."
         # help
         - default:
             - if <player.has_permission[dmodels.load]||true>:
@@ -236,7 +239,7 @@ dmodels_tab_1:
     debug: false
     script:
     - define list <list>
-    - foreach load|loadall|spawn|remove|animate|stopanimate|npcmodel|help|unload|unloadall|rotate|scale|color|viewrange as:key:
+    - foreach load|loadall|spawn|remove|animate|stopanimate|npcmodel|help|unload|unloadall|rotate|scale|color|viewrange|clearcache as:key:
         - if <player.has_permission[dmodels.<[key]>]||true>:
             - define list:->:<[key]>
     - determine <[list]>

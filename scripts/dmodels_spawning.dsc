@@ -19,11 +19,12 @@ dmodels_spawn_model:
     - if !<server.has_flag[dmodels_data.model_<[model_name]>]>:
         - debug error "[DModels] cannot spawn model <[model_name]>, model not loaded"
         - stop
-    - define center <[location].with_pitch[0].with_yaw[<[location].yaw.add[180]>].below[1]>
+    - define center <[location].with_pitch[0].below[1]>
     - define scale <[scale].if_null[<location[1,1,1]>]>
     - define global_scale <[scale].mul[<script[dmodels_config].parsed_key[default_scale]>]>
     - define rotation <[rotation].if_null[<quaternion[identity]>]>
-    - define orientation <[rotation].if_null[<quaternion[identity]>]>
+    - define rotation_fix <location[0,1,0].to_axis_angle_quaternion[<util.pi>]>
+    - define orientation <[rotation_fix].mul[<[rotation].if_null[<quaternion[identity]>]>]>
     - if <[fake_to].exists>:
         - fakespawn dmodel_part_display <[center]> players:<[fake_to]> save:root d:infinite
         - define root <entry[root].faked_entity>
@@ -40,8 +41,6 @@ dmodels_spawn_model:
     - define parentage <map>
     - define model_data <server.flag[dmodels_data.model_<[model_name]>]>
     - foreach <[model_data]> key:id as:part:
-        - if !<[part.item].exists>:
-            - foreach next
         - define rots <[part.rotation].split[,]>
         - define pose <quaternion[<[rots].get[1]>,<[rots].get[2]>,<[rots].get[3]>,<[rots].get[4]>]>
         - define parent_id <[part.parent]>
@@ -55,6 +54,8 @@ dmodels_spawn_model:
         - define new_rot <[parent_rot].mul[<[pose]>]>
         - define parentage.<[id]>.position <[new_pos]>
         - define parentage.<[id]>.rotation <[new_rot]>
+        - if !<[part.item].exists>:
+            - foreach next
         - define translation <[new_pos].proc[dmodels_mul_vecs].context[<[global_scale]>].div[16].mul[0.25]>
         - define to_spawn_ent dmodel_part_display[item=<[part.item]>;display=HEAD;translation=<[translation]>;left_rotation=<[orientation_parent].mul[<[pose]>]>;scale=<[global_scale]>]
         - if <[fake_to].exists>:
@@ -86,7 +87,9 @@ dmodels_reset_model_position:
         - stop
     - define center <[root_entity].location.with_pitch[0].below[1]>
     - define global_scale <[root_entity].flag[dmodel_global_scale].mul[<script[dmodels_config].parsed_key[default_scale]>]>
-    - define orientation <[root_entity].flag[dmodel_global_rotation]>
+    - define rotation <[root_entity].flag[dmodel_global_rotation]>
+    - define rotation_fix <location[0,1,0].to_axis_angle_quaternion[<util.pi>]>
+    - define orientation <[rotation_fix].mul[<[rotation]>]>
     - define parentage <map>
     - define root_parts <[root_entity].flag[dmodel_parts]>
     - foreach <[model_data]> key:id as:part:

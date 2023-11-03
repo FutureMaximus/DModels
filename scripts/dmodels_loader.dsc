@@ -166,9 +166,12 @@ dmodels_load_bbmodel:
                             - define anim_map.right_value <[keyframe.bezier_right_value].parse[trim].comma_separated>
                     - define data_points <[keyframe.data_points].first>
                     - if <[keyframe.channel]> == rotation:
-                        - define anim_map.data <proc[dmodels_quaternion_from_euler].context[<[data_points.x].trim.to_radians.mul[-1]>|<[data_points.y].trim.to_radians.mul[-1]>|<[data_points.z].trim.to_radians>].normalize>
+                        - define data_x <[data_points.x].trim.to_radians.mul[-1]||0>
+                        - define data_y <[data_points.y].trim.to_radians.mul[-1]||0>
+                        - define data_z <[data_points.z].trim.to_radians||0>
+                        - define anim_map.data <proc[dmodels_quaternion_from_euler].context[<[data_x]>|<[data_y]>|<[data_z]>].normalize>
                     - else:
-                        - define anim_map.data <[data_points.x].trim>,<[data_points.y].trim>,<[data_points.z].trim>
+                        - define anim_map.data <[data_points.x].trim||0>,<[data_points.y].trim||0>,<[data_points.z].trim||0>
                     - define animation_list.<[animation.name]>.animators.<[o_uuid]>.frames:->:<[anim_map]>
                 # Sort frames by time (why is this not done by default? BlockBench is weird)
                 - define animation_list.<[animation.name]>.animators.<[o_uuid]>.frames <[animation_list.<[animation.name]>.animators.<[o_uuid]>.frames].sort_by_value[get[time]]>
@@ -349,3 +352,10 @@ dmodels_quaternion_from_euler:
     - define y_q <location[0,1,0].to_axis_angle_quaternion[<[y]>]>
     - define z_q <location[0,0,1].to_axis_angle_quaternion[<[z]>]>
     - determine <[z_q].mul[<[y_q]>].mul[<[x_q]>]>
+
+dmodels_clear_cache:
+    type: task
+    debug: false
+    script:
+    - flag server dmodels_temp_atlas_file:!
+    - flag server dmodels_temp_item_file:!
